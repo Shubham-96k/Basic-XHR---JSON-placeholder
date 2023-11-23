@@ -82,7 +82,6 @@ const templating = eve => {
     let result = " ";
     eve.forEach(ele => {
         result += `
-        <div class="col-md-8 offset-md-2">
             <div class="card mb-2">
                 <div class="card-header bg-dark text-white">
                     ${ele.title}
@@ -95,7 +94,6 @@ const templating = eve => {
                     <button class="btn btn-outline-danger">Delete</button>
                 </div>
             </div>
-        </div>
         `
     });
 
