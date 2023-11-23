@@ -1,7 +1,17 @@
 const cl = console.log;
 
 const posts = document.getElementById("postcontainer");
+const showsidebar = document.getElementById("showsidebar");
+const opensidebar = document.getElementById("opensidebar");
+const hidesidebar = document.getElementById("hidesidebar");
+const backdrop = document.getElementById("backdrop");
 
+//#######Get Form Controls #########
+
+const postform = document.getElementById("postform");
+const titleControl = document.getElementById("title");
+const bodyControl = document.getElementById("body");
+const useridControl = document.getElementById("userid");
 
 
 //html 5 gives us some browser API 
@@ -24,6 +34,46 @@ let posturl = `${baseurl}/posts`;
 // now we have the data url need to do API call and get data for templating;
 
 //########## POST METHOD ############
+
+let postArray = [];
+cl(postArray);
+
+const onAddPost = eve => {
+    eve.preventDefault();
+    let postobj = {
+        title : titleControl.value,
+        body : bodyControl.value,
+        userId : useridControl.value,
+    }
+    let xhr = new XMLHttpRequest();//step 1 created instance or multiple obj
+    xhr.open("POST", posturl, true);//this method send data to given url post method 
+    //success status will be 201;
+    
+    xhr.send(JSON.stringify(postobj));//through post method we called api and sended data
+    //it will be available on payload once submitted if succesfull status will be 201 for post;
+    //once it is successfull with status 201 in response will get that data/object unique id;
+
+    xhr.onload = function(){
+        if(xhr.status === 200 || xhr.status === 201){
+            cl(xhr.response);//in response will get id for that object;
+            postobj.id = JSON.parse(xhr.response).id;
+            postArray.push(postobj);
+            templating(postArray);
+            
+            onActive();
+            Swal.fire({
+                position: "center",
+                icon: "success",
+                title: `Post has been Successfully added`,
+                timer: 1500
+              });
+        }else{
+            alert("something went wrong!!!")
+        }
+        postform.reset();
+    }
+
+}
 
 
 // ######## TEMPLATING ###########
@@ -86,16 +136,28 @@ let xhr = new XMLHttpRequest();//it is a construction which is used to create mu
 
 
         if(xhr.status === 200){ //here , if api is successfull then only next expression should execute
-            let data = JSON.parse(xhr.response);
-            cl(data);// here, from backened or db or server the data will always come in stringify format
+                postArray = JSON.parse(xhr.response);
+                        // here, from backened or db or server the data will always come in stringify format
                         //and key is also stringified by using parse method we converted stringify to object;
-
-            templating(data);
+                        //and here we stored that data in Array
+            templating(postArray);
         }else{
-            alert("something went wrong!!!")
+            alert("something went wrong!!!")//if http request fail with status 404 the response 
+            //msg will be given here
         }
 
     }
 }
  
 geturl();
+
+
+const onActive = () => {
+    opensidebar.classList.toggle("active");
+    backdrop.classList.toggle("active");
+}
+
+postform.addEventListener("submit", onAddPost)
+showsidebar.addEventListener("click", onActive);
+hidesidebar.addEventListener("click", onActive);
+backdrop.addEventListener("click", onActive);
