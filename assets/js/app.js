@@ -11,13 +11,8 @@ const posts = document.getElementById("postcontainer");
 //to transfer and get data communication betn browser and server
 
 
-//XHR is a constructor function 
 
 //will get dumy json data from backened 
-
-//####### GET METHOD ###########
-
-
 
 let baseurl = `https://jsonplaceholder.typicode.com`;
         //here, it is a baseurl containing all form of data 
@@ -28,8 +23,10 @@ let posturl = `${baseurl}/posts`;
 
 // now we have the data url need to do API call and get data for templating;
 
+//########## POST METHOD ############
 
-// ######## TEMPLATING : 
+
+// ######## TEMPLATING ###########
 
 const templating = eve => {
     let result = " ";
@@ -55,6 +52,9 @@ const templating = eve => {
     posts.innerHTML = result;
 }
 
+//####### GET METHOD ###########
+const geturl = () => {
+    
 // ########## STEPS : 
 
 //1] create a instance/object;
@@ -82,7 +82,7 @@ let xhr = new XMLHttpRequest();//it is a construction which is used to create mu
         //while we send data(posts) and if it is successfull response as 201
         //404 if api is unsuccessfull it will throw error as 404
         // cl(xhr.statusText);
-        // cl(xhr.response); //if api is successfull will use xhr.response to get the data for functionality and templating,etc
+        cl(xhr.response); //if api is successfull will use xhr.response to get the data for functionality and templating,etc
 
 
         if(xhr.status === 200){ //here , if api is successfull then only next expression should execute
@@ -96,4 +96,6 @@ let xhr = new XMLHttpRequest();//it is a construction which is used to create mu
         }
 
     }
+}
  
+geturl();
