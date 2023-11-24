@@ -5,6 +5,8 @@ const showsidebar = document.getElementById("showsidebar");
 const opensidebar = document.getElementById("opensidebar");
 const hidesidebar = document.getElementById("hidesidebar");
 const backdrop = document.getElementById("backdrop");
+const addbtn = document.getElementById("addbtn");
+const updatebtn = document.getElementById("updatebtn");
 
 //#######Get Form Controls #########
 
@@ -12,6 +14,7 @@ const postform = document.getElementById("postform");
 const titleControl = document.getElementById("title");
 const bodyControl = document.getElementById("body");
 const useridControl = document.getElementById("userid");
+
 
 
 //html 5 gives us some browser API 
@@ -31,6 +34,56 @@ let posturl = `${baseurl}/posts`;
         //here, we get post content by giving end point posts will get post
         //data from base url
 
+// ########## PATCH to form control ###########
+
+const onEdit = eve => {
+    let getid = eve.closest(".card").id;
+    let getobjurl = `${baseurl}/posts/${getid}`;//  we get url of that obj by giving params
+
+    //we got objecturl need to request api in order to get obj by get method
+
+    let xhr = new XMLHttpRequest();
+    cl(xhr);
+    xhr.open("GET",getobjurl,true);
+    xhr.send();
+    xhr.onload = function(){
+        let getobj = JSON.parse(xhr.response);
+        if(xhr.status === 200){
+            onActive();
+            titleControl.value = getobj.title;
+            bodyControl.value = getobj.body;
+            useridControl.value = getobj.userId;
+            addbtn.classList.add("d-none");
+            updatebtn.classList.remove("d-none");
+        }
+    }   
+}
+
+
+// ######## TEMPLATING ###########
+
+const templating = eve => {
+    let result = " ";
+    eve.forEach(ele => {
+        result += `
+            <div class="card mb-2" id="${ele.id}">
+                <div class="card-header bg-dark text-white">
+                    ${ele.title}
+                </div>
+                <div class="card-body">
+                    <p>${ele.body}</p>
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <button class="btn btn-outline-primary" onclick="onEdit(this)">Edit</button>
+                    <button class="btn btn-outline-danger">Delete</button>
+                </div>
+            </div>
+        `
+    });
+
+    posts.innerHTML = result;
+}
+
 // now we have the data url need to do API call and get data for templating;
 
 //########## POST METHOD ############
@@ -38,26 +91,20 @@ let posturl = `${baseurl}/posts`;
 let postArray = [];
 cl(postArray);
 
-const onAddPost = eve => {
-    eve.preventDefault();
-    let postobj = {
-        title : titleControl.value,
-        body : bodyControl.value,
-        userId : useridControl.value,
-    }
+const createApiobj = eve => {
     let xhr = new XMLHttpRequest();//step 1 created instance or multiple obj
     xhr.open("POST", posturl, true);//this method send data to given url post method 
     //success status will be 201;
     
-    xhr.send(JSON.stringify(postobj));//through post method we called api and sended data
+    xhr.send(JSON.stringify(eve));//through post method we called api and sended data
     //it will be available on payload once submitted if succesfull status will be 201 for post;
     //once it is successfull with status 201 in response will get that data/object unique id;
 
     xhr.onload = function(){
         if(xhr.status === 200 || xhr.status === 201){
             cl(xhr.response);//in response will get id for that object;
-            postobj.id = JSON.parse(xhr.response).id;
-            postArray.push(postobj);
+            eve.id = JSON.parse(xhr.response).id;
+            postArray.push(eve);
             templating(postArray);
             
             onActive();
@@ -72,32 +119,17 @@ const onAddPost = eve => {
         }
         postform.reset();
     }
-
 }
 
-
-// ######## TEMPLATING ###########
-
-const templating = eve => {
-    let result = " ";
-    eve.forEach(ele => {
-        result += `
-            <div class="card mb-2">
-                <div class="card-header bg-dark text-white">
-                    ${ele.title}
-                </div>
-                <div class="card-body">
-                    <p>${ele.body}</p>
-                </div>
-                <div class="card-footer d-flex justify-content-between">
-                    <button class="btn btn-outline-primary">Edit</button>
-                    <button class="btn btn-outline-danger">Delete</button>
-                </div>
-            </div>
-        `
-    });
-
-    posts.innerHTML = result;
+const onAddPost = eve => {
+    eve.preventDefault();
+    let postobj = {
+        title : titleControl.value,
+        body : bodyControl.value,
+        userId : useridControl.value,
+    }
+    
+    createApiobj(postobj);
 }
 
 //####### GET METHOD ###########

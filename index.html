@@ -36,6 +36,7 @@
                         <textarea id="body" rows="4" class="form-control" required></textarea>
                     </div>
                     <div class="form-group">
+                        <label for="userid">UserId :</label>
                         <select id="userid" class="form-control">
                             <option value="1">1</option>
                             <option value="2">2</option>
@@ -51,7 +52,8 @@
                     </div>
                 </div>
                 <div class="card-footer text-right bg-dark text-white">
-                    <button class="btn-danger" type="submit">Add Post</button>
+                    <button class="btn-danger" type="submit" id="addbtn"><strong>Add Post</strong></button>
+                    <button class="btn-success d-none" type="button" id="updatebtn"><strong>Update Post</strong></button>
                 </div>
             </form>
         </div>
