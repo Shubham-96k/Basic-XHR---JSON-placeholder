@@ -38,6 +38,7 @@ let posturl = `${baseurl}/posts`;
 
 const onEdit = eve => {
     let getid = eve.closest(".card").id;
+    localStorage.setItem("editId", getid);
     let getobjurl = `${baseurl}/posts/${getid}`;//  we get url of that obj by giving params
 
     //we got objecturl need to request api in order to get obj by get method
@@ -57,6 +58,43 @@ const onEdit = eve => {
             updatebtn.classList.remove("d-none");
         }
     }   
+}
+
+const onUpdate = () => {
+    let updateobj = {
+        title : titleControl.value,
+        body : bodyControl.value,
+        userId : useridControl.value,
+    }
+    let getid = JSON.parse(localStorage.getItem("editId"));
+    let updateurl = `${baseurl}/posts/${getid}`;
+    let xhr = new XMLHttpRequest;
+    xhr.open("PATCH", updateurl, true);
+    xhr.send(JSON.stringify(updateobj));
+    xhr.onload = function(){
+        if(xhr.status === 200){
+            let getindex = postArray.findIndex(post => {
+                return post.id === getid;
+            });
+            postArray[getindex].title = updateobj.title;
+            postArray[getindex].body = updateobj.body;
+            postArray[getindex].userId = updateobj.userId;
+            templating(postArray);
+            addbtn.classList.remove("d-none");
+            updatebtn.classList.add("d-none");
+            postform.reset();
+            onActive(); 
+            Swal.fire({
+                position: "bottom-end",
+                icon: "success",
+                title: "Post Updated Successfully",
+                timer: 1500
+              });
+        }else{
+            alert("something went wrong !!!")
+        }
+    }
+    
 }
 
 
@@ -188,6 +226,7 @@ const onActive = () => {
 }
 
 postform.addEventListener("submit", onAddPost)
+updatebtn.addEventListener("click", onUpdate)
 showsidebar.addEventListener("click", onActive);
 hidesidebar.addEventListener("click", onActive);
 backdrop.addEventListener("click", onActive);
