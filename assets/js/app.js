@@ -56,6 +56,8 @@ const onEdit = eve => {
             useridControl.value = getobj.userId;
             addbtn.classList.add("d-none");
             updatebtn.classList.remove("d-none");
+        }else{
+            alert("something went wrong !!!");
         }
     }   
 }
@@ -97,6 +99,39 @@ const onUpdate = () => {
     
 }
 
+const onRemove = eve => {
+    let getid = eve.closest(".card").id;
+    let deleteurl = `${baseurl}/posts/${getid}`;
+    let xhr = new XMLHttpRequest;
+    xhr.open("DELETE", deleteurl);
+    xhr.send();
+    xhr.onload = () => {
+        if(xhr.status === 200){
+            // cl(xhr.response);
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  Swal.fire({
+                    title: "Deleted!",
+                    text: "Your file has been deleted.",
+                    icon: "success",
+                    timer : 1500
+                  });
+                  document.getElementById(getid).remove();
+                }
+              });
+        }else{
+            alert("something went wrong !!!")
+        }
+    }
+}
 
 // ######## TEMPLATING ###########
 
@@ -113,7 +148,7 @@ const templating = eve => {
                 </div>
                 <div class="card-footer d-flex justify-content-between">
                     <button class="btn btn-outline-primary" onclick="onEdit(this)">Edit</button>
-                    <button class="btn btn-outline-danger">Delete</button>
+                    <button class="btn btn-outline-danger" onclick="onRemove(this)">Delete</button>
                 </div>
             </div>
         `
