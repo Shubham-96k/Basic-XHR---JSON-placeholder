@@ -70,7 +70,7 @@ const onUpdate = () => {
     }
     let getid = JSON.parse(localStorage.getItem("editId"));
     let updateurl = `${baseurl}/posts/${getid}`;
-    let xhr = new XMLHttpRequest;
+    let xhr = new XMLHttpRequest();
     xhr.open("PATCH", updateurl, true);
     xhr.send(JSON.stringify(updateobj));
     xhr.onload = function(){
@@ -102,7 +102,7 @@ const onUpdate = () => {
 const onRemove = eve => {
     let getid = eve.closest(".card").id;
     let deleteurl = `${baseurl}/posts/${getid}`;
-    let xhr = new XMLHttpRequest;
+    let xhr = new XMLHttpRequest();
     xhr.open("DELETE", deleteurl);
     xhr.send();
     xhr.onload = () => {
@@ -164,6 +164,25 @@ const templating = eve => {
 let postArray = [];
 cl(postArray);
 
+const addposttemp = eve => {
+    let card = document.createElement("div");
+    card.className = "card mb-2";
+    card.id = eve.id;
+    card.innerHTML = `
+            <div class="card-header bg-dark text-white">
+                ${eve.title}
+            </div>
+            <div class="card-body">
+                <p>${eve.body}</p>
+            </div>
+            <div class="card-footer d-flex justify-content-between">
+                <button class="btn btn-outline-primary" onclick="onEdit(this)">Edit</button>
+                <button class="btn btn-outline-danger" onclick="onRemove(this)">Delete</button>
+            </div>
+    `
+    posts.append(card);
+}
+
 const createApiobj = eve => {
     let xhr = new XMLHttpRequest();//step 1 created instance or multiple obj
     xhr.open("POST", posturl, true);//this method send data to given url post method 
@@ -178,8 +197,8 @@ const createApiobj = eve => {
             cl(xhr.response);//in response will get id for that object;
             eve.id = JSON.parse(xhr.response).id;
             postArray.push(eve);
-            templating(postArray);
-            
+            // templating(postArray);//here we are doing templating for 100 obj in order to add 1 obj
+            addposttemp(eve)// here we created function which will add only one obj 
             onActive();
             Swal.fire({
                 position: "center",
